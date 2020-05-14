@@ -1,0 +1,10 @@
+svg {
+  /* border: 1px solid black; */
+  background: lightgrey;
+  display: block;
+  margin: auto;
+}
+
+#title {
+  text-align: center;
+}
