@@ -11,6 +11,8 @@
     <script type="text/javascript" src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
 
     <h1 id="title">Doping Allegations in Professional Cycling</h1>
+    <h2>35 Fastest Times up Alpe d'Huez</h2>
+
 
     <script type="text/javascript">
 
@@ -24,7 +26,7 @@
         const tbp = 50  //top-bottom padding
         const lrp = 70  //Left-Right Padding
 
-
+        // convert to Date Object for axes
         data.forEach(d => {
           const seconds = d.Seconds % 60
           const minutes = d.Seconds / 60
@@ -33,8 +35,6 @@
           d.Year = new Date(d.Year, 0, 1, 0)
         })
 
-        const timeFormat = d3.timeFormat("%M:%S")
-        const yearFormat = d3.timeFormat("%Y")
 
 
         const minYear = () => {
@@ -58,6 +58,9 @@
                         .domain(d3.extent(data, d => d.Time))
                         .range([tbp, h - tbp])
 
+
+        const timeFormat = d3.timeFormat("%M:%S")
+        const yearFormat = d3.timeFormat("%Y")
         const xAxis = d3.axisBottom(xScale).tickFormat(yearFormat)
         const yAxis = d3.axisLeft(yScale).tickFormat(timeFormat)
 
@@ -66,16 +69,39 @@
           .attr("height", h)
           .attr("width", w)
 
+        const tooltip = d3.select("body")
+          .append("div").attr("id", "tooltip").style("opacity", 0)
+
+        const color = d3.scaleOrdinal(d3.schemeDark2);
+
         svg.selectAll("circle")
           .data(data)
           .enter()
           .append("circle")
           .attr("cx", d => xScale(d["Year"]))
           .attr("cy", d => yScale(d["Time"]))
-          .attr("r", 5)
+          .attr("r", 7)
           .attr("class", "dot")
           .attr("data-xvalue", d => d.Year)
           .attr("data-yvalue", d => d["Time"])
+          .attr("fill", d => {
+            return color(d.Doping != "")
+          })
+          .on("mouseover", (d) => {
+            tooltip.style("opacity", .9)
+              .html(`${d.Name}
+                     ${d.Nationality} <br>
+                     ${d.Year.getFullYear()} <br>
+                     Time: ${timeFormat(d.Time)} <br>
+                     ${d.Doping ? d.Doping : "No doping allegations"}`)
+              .style("left", (d3.event.pageX + 10) + "px")
+              .style("top", (d3.event.pageY - h - 150) + "px")
+              .attr("data-year", d.Year)
+          })
+          .on("mouseout", d => {
+            tooltip.style("opacity", 0)
+          })
+
 
         svg.append("g")
           .attr("transform", `translate(0, ${h - tbp})`)
@@ -87,6 +113,31 @@
           .call(yAxis)
           .attr("id", "y-axis")
 
+        const legendContainer = svg.append("g")
+          .attr("id", "legend")
+
+        const legend = legendContainer.selectAll("#legend")
+          .data(color.domain())
+          .enter().append("g")
+          .attr("class", "legend-label")
+          .attr("transform", (d, i) => {
+            return `translate(0, ${h/2 + i * 20})`
+          })
+
+        legend.append("rect")
+          .attr("x", w - lrp)
+          .attr("width", 18)
+          .attr("height", 18)
+          .style("fill", color)
+
+        legend.append("text")
+          .attr("x", w - lrp - 10)
+          .attr("y", 9)
+          .attr("dy", ".3em")
+          .style("text-anchor", "end")
+          .text((d) => {
+            return d ? "Riders with doping allegations" : "No doping allegations"
+          })
 
       })
 

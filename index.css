@@ -1,10 +1,35 @@
+body {
+  overflow-y: hidden;
+}
+
 svg {
   /* border: 1px solid black; */
-  background: lightgrey;
   display: block;
   margin: auto;
 }
 
 #title {
   text-align: center;
+}
+h2 {
+  text-align: center;
+}
+
+.dot {
+  opacity: .8;
+  stroke: black;
+  stroke-width: 1
+}
+
+#tooltip {
+  position: relative;
+  padding: 5px;
+  background-color: lightgrey;
+  border: 1px solid black;
+  width: 150px;
+  border-radius: 10px;
+}
+
+#legend {
+  background-color: lightgrey
 }
