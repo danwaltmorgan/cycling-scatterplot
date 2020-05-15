@@ -70,7 +70,7 @@
           .attr("width", w)
 
         const tooltip = d3.select("body")
-          .append("div").attr("id", "tooltip").style("opacity", 0)
+          .append("div").attr("id", "tooltip").style("display", "none")
 
         const color = d3.scaleOrdinal(d3.schemeDark2);
 
@@ -88,7 +88,7 @@
             return color(d.Doping != "")
           })
           .on("mouseover", (d) => {
-            tooltip.style("opacity", .9)
+            tooltip.style("display", "block")
               .html(`${d.Name}
                      ${d.Nationality} <br>
                      ${d.Year.getFullYear()} <br>
@@ -99,7 +99,7 @@
               .attr("data-year", d.Year)
           })
           .on("mouseout", d => {
-            tooltip.style("opacity", 0)
+            tooltip.style("display", "none")
           })
 
 
